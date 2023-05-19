@@ -17,66 +17,78 @@ public static class PseudoKeno
 
     private static void Main()
     {
-        // Array to store entered numbers
-        var numbers = new int[NumberOfBalls];
-
-        // Welcome message and instructions
-        Console.WriteLine($"Welcome to Pseudo Keno! Before the game begins, I need you to enter {NumberOfBalls} numbers.");
-
-        // Loop to get valid input for all balls
-        for (var i = 0; i < NumberOfBalls;)
+        do
         {
-            // Current ball number
-            var ballNumber = i + 1;
-            Console.Write($"Enter an integer for ball nr {ballNumber}: ");
-            var input = Console.ReadLine();
+            // Clear any previous output
+            Console.Clear();
 
-            // Check if input is valid and within the specified range
-            if (!string.IsNullOrWhiteSpace(input) && IsValidInput(input, out var number))
+            // Array to store entered numbers
+            var numbers = new int[NumberOfBalls];
+
+            // Welcome message and instructions
+            Console.WriteLine(
+                $"Welcome to Pseudo Keno! Before the game begins, you have to enter {NumberOfBalls} integers.");
+
+            // Loop to get valid input for all balls
+            for (var i = 0; i < NumberOfBalls;)
             {
-                // Store the valid number
-                numbers[i] = number;
-                // Move to the next ball
-                i++;
+                // Current ball number
+                var ballNumber = i + 1;
+                Console.Write($"Enter an integer for ball nr {ballNumber}: ");
+                var input = Console.ReadLine();
+
+                // Check if input is valid and within the specified range
+                if (!string.IsNullOrWhiteSpace(input) && IsValidInput(input, out var number))
+                {
+                    // Store the valid number
+                    numbers[i] = number;
+                    // Move to the next ball
+                    i++;
+                }
+                else
+                {
+                    Console.WriteLine(
+                        $"Error: Invalid input. Please enter a valid integer between {MinValue} and {MaxValue}!");
+                }
             }
-            else
+
+            // Generate random numbers
+            var randomNumbers = GenerateRandomNumbers(NumberOfRandomNumbers, MinValue, MaxValue);
+
+            // Display the generated random numbers
+            Console.Write("The random numbers are: ");
+            Console.WriteLine(string.Join(", ", randomNumbers));
+
+            // Find the matching numbers
+            var matchingNumbers = FindMatchingNumbers(numbers, randomNumbers);
+
+            // Check the count of matching numbers and display the result
+            switch (matchingNumbers.Count)
             {
-                Console.WriteLine(
-                    $"Error: Invalid input. Please enter a valid integer between {MinValue} and {MaxValue}!");
+                case 1:
+                {
+                    // Find the ball number of the winning number
+                    var ballNumber = Array.IndexOf(randomNumbers, matchingNumbers[0]) + 1;
+                    Console.WriteLine(
+                        $"You won! Your winning number {matchingNumbers[0]} was found at ball number {ballNumber}.");
+                    break;
+                }
+                case > 1:
+                    Console.Write("You won! Your winning numbers were found at ball numbers: ");
+                    // Find the ball numbers of the matching numbers
+                    Console.WriteLine(string.Join(", ",
+                        matchingNumbers.Select(num => Array.IndexOf(randomNumbers, num) + 1)));
+                    break;
+                default:
+                    Console.WriteLine("Unlucky! You didn't win this time.");
+                    break;
             }
-        }
 
-        // Generate random numbers
-        var randomNumbers = GenerateRandomNumbers(NumberOfRandomNumbers, MinValue, MaxValue);
+            // Ask the user if they want to play again
+            Console.WriteLine("Do you want to play again? (Y/n)");
 
-        // Display the generated random numbers
-        Console.Write("The random numbers are: ");
-        Console.WriteLine(string.Join(", ", randomNumbers));
-
-        // Find the matching numbers
-        var matchingNumbers = FindMatchingNumbers(numbers, randomNumbers);
-
-        // Check the count of matching numbers and display the result
-        switch (matchingNumbers.Count)
-        {
-            case 1:
-            {
-                // Find the ball number of the winning number
-                var ballNumber = Array.IndexOf(randomNumbers, matchingNumbers[0]) + 1;
-                Console.WriteLine(
-                    $"You won! Your winning number {matchingNumbers[0]} was found at ball number {ballNumber}.");
-                break;
-            }
-            case > 1:
-                Console.Write("You won! Your winning numbers were found at ball numbers: ");
-                // Find the ball numbers of the matching numbers
-                Console.WriteLine(string.Join(", ",
-                    matchingNumbers.Select(num => Array.IndexOf(randomNumbers, num) + 1)));
-                break;
-            default:
-                Console.WriteLine("Unlucky! You didn't win this time.");
-                break;
-        }
+            // Keep looping until the user enters 'n'
+        } while (Console.ReadKey().KeyChar != 'n');
     }
 
     // Check if the input is a valid integer within the specified range
