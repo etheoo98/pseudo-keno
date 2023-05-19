@@ -88,7 +88,7 @@ public static class PseudoKeno
             Console.WriteLine("Do you want to play again? (Y/n)");
 
             // Keep looping until the user enters 'n'
-        } while (Console.ReadKey().KeyChar != 'n');
+        } while (char.ToLower(Console.ReadKey().KeyChar) != 'n');
     }
 
     // Check if the input is a valid integer within the specified range
